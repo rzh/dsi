@@ -22,3 +22,9 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# files should never be checked in
+security*
+srun.sh
+*tfstate*
+
