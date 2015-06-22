@@ -1,9 +1,8 @@
 
-key_name = "rui-cap-east"
-key_path = "/Users/rui/.ssh/rui-cap-east.pem"
+key_name = "rui-aws-cap"
+key_path = "../../keys/rui-aws-cap.pem"
 count = "1"
 mastercount = "1"
-configcount = "0"
 
 mongoversion = "3.0.4"
 user = "rui"

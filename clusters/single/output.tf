@@ -1,13 +1,13 @@
 output "address" {
-  value = "Instances: ${join(", ", aws_instance.shardmember.*.id)}"
+  value = "Instances: ${join(", ", aws_instance.member.*.id)}"
 }
 
 output "private_member_ip" {
-  value = "${join(" ", aws_instance.shardmember.*.private_ip)}"
+  value = "${join(" ", aws_instance.member.*.private_ip)}"
 }
 
 output "public_member_ip" {
-  value = "${join(" ", aws_instance.shardmember.*.public_ip)}"
+  value = "${join(" ", aws_instance.member.*.public_ip)}"
 }
 
 output "private_mongos_ip" {
@@ -26,16 +26,3 @@ output "total_count" {
   value = "${var.count}"
 }
 
-output "private_config_ip" {
-  value = "${join(" ", aws_instance.configserver.*.private_ip)}"
-}
-
-output "public_config_ip" {
-  value = "${join(" ", aws_instance.configserver.*.public_ip)}"
-}
-
-
-
-#output "ip" {
-#  value = "\nPublic IP : ${join(", ", aws_instance.shardmember.*.public_ip)}\nPrivate IP : ${join(", ", aws_instance.shardmember.*.private_ip)}"
-#}
