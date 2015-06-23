@@ -209,6 +209,7 @@ resource "aws_instance" "master" {
             "git clone https://github.com/rzh/sysbench-mongodb.git",
             "git clone -b shard-test https://github.com/rzh/YCSB.git",
             "curl https://raw.githubusercontent.com/rzh/utils/master/mongodb/scripts/install_maven.sh | sudo bash",
+            "cd /home/ec2-user/YCSB/ycsb-mongodb; mvn clean package",
 #            "dev=/dev/xvdc; sudo umount $dev; sudo mkfs.ext4 -F $dev; sudo mount $dev",
 #            "dev=/dev/xvdd; dpath=/media/ephemeral1; sudo mkdir -p $dpath; sudo umount $dev; sudo mkfs.ext4 -F $dev; sudo mount $dev $dpath",
 #            "sudo chmod 777 /media/ephemeral0",
