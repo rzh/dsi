@@ -1,4 +1,4 @@
-export PEMFILE=~/bin/rui-aws-cap.pem
+export PEMFILE=../../aws.pem
 export SSHUSER=ec2-user
 
 source ips.sh
