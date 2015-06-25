@@ -4,18 +4,18 @@ echo "Create terraform config file"
 
 rm security.tf
 
-echo '
-provider "aws" {
-    access_key = "$1"
-    secret_key = "$2"
-    region = "us-west-2"
+echo "
+provider \"aws\" {
+    access_key = \"${1}\"
+    secret_key = \"${2}\"
+    region = \"us-west-2\"
 }
 
 
-variable "key_name" {
-    default = "rui-aws-cap"
+variable \"key_name\" {
+    default = \"rui-aws-cap\"
 }
 
-variable "key_path" { 
-    default = "../../keys/aws.pem"
-}' > security.tf
+variable \"key_path\" { 
+    default = \"../../keys/aws.pem\"
+}" > security.tf
