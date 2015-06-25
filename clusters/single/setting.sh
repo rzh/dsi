@@ -1,4 +1,4 @@
-export PEMFILE=../../aws.pem
+export PEMFILE=../../keys/aws.pem
 export SSHUSER=ec2-user
 
 source ips.sh
