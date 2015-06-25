@@ -1,6 +1,5 @@
 
 key_name = "rui-aws-cap"
-key_path = "../../keys/rui-aws-cap.pem"
 count = "1"
 mastercount = "1"
 
