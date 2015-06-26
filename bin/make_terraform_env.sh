@@ -2,8 +2,6 @@
 
 echo "Create terraform config file"
 
-rm security.tf
-
 echo "
 provider \"aws\" {
     access_key = \"${1}\"
