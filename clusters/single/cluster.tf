@@ -117,8 +117,9 @@ resource "aws_instance" "member" {
     # We run a remote provisioner on the instance after creating it.
     provisioner "remote-exec" {
         inline = [
-            "sudo yum -y update",
-            "sudo yum -y install tmux git wget sysstat dstat perf",
+            # "sudo yum -y update",
+            # "sudo yum -y install tmux git wget sysstat dstat perf",
+            "sudo yum -y install git wget sysstat dstat perf",
             # "wget --no-check-certificate https://raw.githubusercontent.com/rzh/dotfiles/no_ycm/bootstrap.sh -O - | sh",
             "curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv; mv mongodb-linux-x86_64-${var.mongoversion} mongodb",
             "mkdir bin",
