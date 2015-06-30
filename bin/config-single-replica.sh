@@ -204,6 +204,8 @@ fi
 
 ## all shards
 ssh-keygen -R $mc
+killAllProcess $mc "mongod"
+killAllProcess $mc "java"
 for i in "${ALL_HOST[@]}"
 do
     ssh-keygen -R ${!i}
