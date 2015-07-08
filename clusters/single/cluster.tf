@@ -117,12 +117,9 @@ resource "aws_instance" "member" {
     # We run a remote provisioner on the instance after creating it.
     provisioner "remote-exec" {
         inline = [
-            # "sudo yum -y update",
-            # "sudo yum -y install tmux git wget sysstat dstat perf",
             "sudo yum -y install git wget sysstat dstat perf xfsprogs",
-            # "wget --no-check-certificate https://raw.githubusercontent.com/rzh/dotfiles/no_ycm/bootstrap.sh -O - | sh",
             "mkdir mongodb; curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv -C mongodb; cd mongodb; mv */bin . ",
-            "mkdir bin",
+            "mkdir -p ~/bin",
             "ln -s ~/mongodb/bin/mongo ~/bin/mongo",
             # "dev=/dev/xvdc; sudo umount $dev; sudo mkfs.ext4 -F $dev; sudo mount $dev",
             "dev=/dev/xvdc; sudo umount $dev; sudo mkfs.xfs -f $dev; sudo mount $dev",
@@ -140,7 +137,6 @@ resource "aws_instance" "member" {
             "echo f | sudo tee /sys/class/net/eth0/queues/rx-0/rps_cpus",
             "echo f0 | sudo tee /sys/class/net/eth0/queues/tx-0/xps_cpus",
             "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmHUZLsuGvNUlCiaZ83jS9f49S0plAtCH19Z2iATOYPH1XE2T8ULcHdFX2GkYiaEqI+fCf1J1opif45sW/5yeDtIp4BfRAdOu2tOvkKvzlnGZndnLzFKuFfBPcysKyrGxkqBvdupOdUROiSIMwPcFgEzyLHk3pQ8lzURiJNtplQ82g3aDi4wneLDK+zuIVCl+QdP/jCc0kpYyrsWKSbxi0YrdpG3E25Q4Rn9uom58c66/3h6MVlk22w7/lMYXWc5fXmyMLwyv4KndH2u3lV45UAb6cuJ6vn6wowiD9N9J1GS57m8jAKaQC1ZVgcZBbDXMR8fbGdc9AH044JVtXe3lT shardtest@test.mongo' | tee -a ~/.ssh/authorized_keys",
-            # "rm -rf ~/.vim/bundle/YouCompleteMe/",
             "rm *.tgz",
             "rm *.rpm",
             "ls"
