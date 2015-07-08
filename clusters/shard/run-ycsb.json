@@ -1,0 +1,14 @@
+{
+    "PemFile": "../../keys/aws.pem",
+    "runs": [
+            {
+                        "run_id": "ycsb_load",
+                        "clients": [ "ec2-user@" ],
+                        "client_logs": [],
+                        "servers": [ "ec2-user@" ],
+                        "server_logs": [],
+                        "type"  : "ycsb",
+                        "cmd": "cd YCSB/ycsb-mongodb; ./evergreen-load.sh; sleep 1"
+                    }
+        ]}
+

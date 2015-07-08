@@ -15,7 +15,7 @@ resource "aws_internet_gateway" "gw" {
 resource "aws_subnet" "main" {
     vpc_id = "${aws_vpc.main.id}"
     cidr_block = "10.2.1.0/24"
-    availability_zone = "us-east-1a"
+    availability_zone = "us-west-2b"
 
     tags {
         Name = "${var.user}-shard-subnet"
@@ -79,8 +79,8 @@ resource "aws_security_group" "shard-default" {
 
 
 resource "aws_instance" "shardmember" {
-    # Amazon Linux AMI 2015.03 (HVM), SSD Volume Type - ami-1ecae776
-    ami = "ami-1ecae776"
+    # Amazon Linux AMI 2015.03 (HVM), SSD Volume Type
+    ami = "ami-e7527ed7"
 
     instance_type = "${var.secondary_type}"
 
@@ -98,9 +98,9 @@ resource "aws_instance" "shardmember" {
     }
 
     security_groups = ["${aws_security_group.shard-default.id}"]
-    availability_zone = "us-east-1a"
-    placement_group = "${var.user}-shard-perf"
-    tenancy = "dedicated"
+    availability_zone = "us-west-2b"
+    # placement_group = "${var.user}-shard-perf"
+    # tenancy = "dedicated"
 
     key_name = "${var.key_name}"
     tags = {
@@ -125,17 +125,17 @@ resource "aws_instance" "shardmember" {
     # We run a remote provisioner on the instance after creating it.
     provisioner "remote-exec" {
         inline = [
-            "sudo yum -y update",
-            "sudo yum -y install tmux git wget sysstat dstat perf",
-            "wget --no-check-certificate https://raw.githubusercontent.com/rzh/dotfiles/no_ycm/bootstrap.sh -O - | sh",
-            "curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv; mv mongodb-linux-x86_64-${var.mongoversion} ${var.mongoversion}",
-            "mkdir bin",
+            "sudo yum -y install git wget sysstat dstat perf xfsprogs",
+            "mkdir mongodb; curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv -C mongodb; cd mongodb; mv */bin . ",
+            "mkdir -p ~/bin",
             "ln -s ~/${var.mongoversion}/bin/mongo ~/bin/mongo",
-            "dev=/dev/xvdc; sudo umount $dev; sudo mkfs.ext4 -F $dev; sudo mount $dev",
+            # "dev=/dev/xvdc; sudo umount $dev; sudo mkfs.ext4 -F $dev; sudo mount $dev",
+            "dev=/dev/xvdc; sudo umount $dev; sudo mkfs.xfs -f $dev; sudo mount $dev",
             "sudo chmod 777 /media/ephemeral0",
             "sudo chown ec2-user /media/ephemeral0",
 #            "sudo umount /dev/xvdd; sudo mkswap /dev/xvdd; sudo swapon /dev/xvdd",
-            "dev=/dev/xvdd; dpath=/media/ephemeral1; sudo mkdir -p $dpath; sudo umount $dev; sudo mkfs.ext4 -F $dev; sudo mount $dev $dpath; ",
+            # "dev=/dev/xvdd; dpath=/media/ephemeral1; sudo mkdir -p $dpath; sudo umount $dev; sudo mkfs.ext4 -F $dev; sudo mount $dev $dpath; ",
+            "dev=/dev/xvdd; dpath=/media/ephemeral1; sudo mkdir -p $dpath; sudo umount $dev; sudo mkfs.xfs -f $dev; sudo mount $dev $dpath; ",
             "sudo chmod 777 /media/ephemeral1",
             "sudo chown ec2-user /media/ephemeral1",
             "ln -s /media/ephemeral0 ~/data",
@@ -145,7 +145,6 @@ resource "aws_instance" "shardmember" {
             "echo f | sudo tee /sys/class/net/eth0/queues/rx-0/rps_cpus",
             "echo f0 | sudo tee /sys/class/net/eth0/queues/tx-0/xps_cpus",
             "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmHUZLsuGvNUlCiaZ83jS9f49S0plAtCH19Z2iATOYPH1XE2T8ULcHdFX2GkYiaEqI+fCf1J1opif45sW/5yeDtIp4BfRAdOu2tOvkKvzlnGZndnLzFKuFfBPcysKyrGxkqBvdupOdUROiSIMwPcFgEzyLHk3pQ8lzURiJNtplQ82g3aDi4wneLDK+zuIVCl+QdP/jCc0kpYyrsWKSbxi0YrdpG3E25Q4Rn9uom58c66/3h6MVlk22w7/lMYXWc5fXmyMLwyv4KndH2u3lV45UAb6cuJ6vn6wowiD9N9J1GS57m8jAKaQC1ZVgcZBbDXMR8fbGdc9AH044JVtXe3lT shardtest@test.mongo' | tee -a ~/.ssh/authorized_keys",
-            "rm -rf ~/.vim/bundle/YouCompleteMe/",
             "rm *.tgz",
             "rm *.rpm",
             "ls"
@@ -158,8 +157,8 @@ resource "aws_instance" "shardmember" {
 }
 
 resource "aws_instance" "master" {
-    # Amazon Linux AMI 2015.03 (HVM), SSD Volume Type - ami-1ecae776
-    ami = "ami-1ecae776"
+    # Amazon Linux AMI 2015.03 (HVM), SSD Volume Type
+    ami = "ami-e7527ed7"
 
     instance_type = "${var.primary_type}"
 
@@ -176,9 +175,9 @@ resource "aws_instance" "master" {
     }
 
     security_groups = ["${aws_security_group.shard-default.id}"]
-    availability_zone = "us-east-1a"
-    placement_group = "${var.user}-shard-perf"
-    tenancy = "dedicated"
+    availability_zone = "us-west-2b"
+    # placement_group = "${var.user}-shard-perf"
+    # tenancy = "dedicated"
 
     key_name = "${var.key_name}"
     tags = {
@@ -203,11 +202,9 @@ resource "aws_instance" "master" {
     # We run a remote provisioner on the instance after creating it.
     provisioner "remote-exec" {
         inline = [
-#            "sudo yum -y update",
             "sudo yum -y install tmux git wget sysstat dstat perf",
-            "wget --no-check-certificate https://raw.githubusercontent.com/rzh/dotfiles/no_ycm/bootstrap.sh -O - | sh",
             "curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv; mv mongodb-linux-x86_64-${var.mongoversion} ${var.mongoversion}",
-            "mkdir bin",
+            "mkdir -p ~/bin",
             "ln -s ~/${var.mongoversion}/bin/mongo ~/bin/mongo",
             "wget --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/7u71-b14/jdk-7u71-linux-x64.rpm; sudo rpm -i jdk-7u71-linux-x64.rpm;",
             "sudo /usr/sbin/alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_71/bin/java 20000",
@@ -229,7 +226,6 @@ resource "aws_instance" "master" {
             "echo f0 | sudo tee /sys/class/net/eth0/queues/tx-0/xps_cpus",
             "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmHUZLsuGvNUlCiaZ83jS9f49S0plAtCH19Z2iATOYPH1XE2T8ULcHdFX2GkYiaEqI+fCf1J1opif45sW/5yeDtIp4BfRAdOu2tOvkKvzlnGZndnLzFKuFfBPcysKyrGxkqBvdupOdUROiSIMwPcFgEzyLHk3pQ8lzURiJNtplQ82g3aDi4wneLDK+zuIVCl+QdP/jCc0kpYyrsWKSbxi0YrdpG3E25Q4Rn9uom58c66/3h6MVlk22w7/lMYXWc5fXmyMLwyv4KndH2u3lV45UAb6cuJ6vn6wowiD9N9J1GS57m8jAKaQC1ZVgcZBbDXMR8fbGdc9AH044JVtXe3lT shardtest@test.mongo' | tee -a ~/.ssh/authorized_keys",
             "chmod 400 ~/.ssh/id_rsa",
-            "rm -rf ~/.vim/bundle/YouCompleteMe/",
             "rm *.tgz",
             "rm *.rpm",
             "ls"
@@ -238,8 +234,8 @@ resource "aws_instance" "master" {
 }
 
 resource "aws_instance" "configserver" {
-    # Amazon Linux AMI 2015.03 (HVM), SSD Volume Type - ami-1ecae776
-    ami = "ami-1ecae776"
+    # Amazon Linux AMI 2015.03 (HVM), SSD Volume Type
+    ami = "ami-e7527ed7"
 
     instance_type = "${var.configserver_type}"
 
@@ -258,7 +254,7 @@ resource "aws_instance" "configserver" {
     }
 
     security_groups = ["${aws_security_group.shard-default.id}"]
-    availability_zone = "us-east-1a"
+    availability_zone = "us-west-2b"
 
     key_name = "${var.key_name}"
     tags = {
@@ -272,13 +268,10 @@ resource "aws_instance" "configserver" {
     # We run a remote provisioner on the instance after creating it.
     provisioner "remote-exec" {
         inline = [
-            "sudo yum -y update",
             "sudo yum -y install tmux git wget sysstat dstat perf",
-            "wget --no-check-certificate https://raw.githubusercontent.com/rzh/dotfiles/no_ycm/bootstrap.sh -O - | sh",
             "curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv; mv mongodb-linux-x86_64-${var.mongoversion} ${var.mongoversion}",
-            "mkdir bin",
+            "mkdir -p ~/bin",
             "ln -s ~/${var.mongoversion}/bin/mongo ~/bin/mongo",
-#            "curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.6.7.tgz | tar zxv ; mv mongodb-linux-x86_64-2.6.7 2.6.7",
             "echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/enabled", 
             "echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/defrag",
             "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmHUZLsuGvNUlCiaZ83jS9f49S0plAtCH19Z2iATOYPH1XE2T8ULcHdFX2GkYiaEqI+fCf1J1opif45sW/5yeDtIp4BfRAdOu2tOvkKvzlnGZndnLzFKuFfBPcysKyrGxkqBvdupOdUROiSIMwPcFgEzyLHk3pQ8lzURiJNtplQ82g3aDi4wneLDK+zuIVCl+QdP/jCc0kpYyrsWKSbxi0YrdpG3E25Q4Rn9uom58c66/3h6MVlk22w7/lMYXWc5fXmyMLwyv4KndH2u3lV45UAb6cuJ6vn6wowiD9N9J1GS57m8jAKaQC1ZVgcZBbDXMR8fbGdc9AH044JVtXe3lT shardtest@test.mongo' | tee -a ~/.ssh/authorized_keys",
@@ -286,7 +279,6 @@ resource "aws_instance" "configserver" {
             "echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/defrag", 
             "echo f | sudo tee /sys/class/net/eth0/queues/rx-0/rps_cpus",
             "echo f0 | sudo tee /sys/class/net/eth0/queues/tx-0/xps_cpus",
-            "rm -rf ~/.vim/bundle/YouCompleteMe/",
             "rm *.tgz",
             "rm *.rpm",
             "ls"
