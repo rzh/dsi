@@ -132,7 +132,10 @@ startReplicaMember() {
 
     runSSHCommand $ssh_url "rm -rf $MY_ROOT/data/logs/mongos.log"
     runSSHCommand $ssh_url "rm -rf $MY_ROOT/data/dbs"
+    runSSHCommand $ssh_url "rm -rf /media/ephemeral1/journal"
     runSSHCommand $ssh_url "mkdir -p $MY_ROOT/data/dbs"
+    runSSHCommand $ssh_url "mkdir -p /media/ephemeral1/journal"
+    runSSHCommand $ssh_url "cd $MY_ROOT/data/dbs; ln -s /media/ephemeral1/journal journal"
     runSSHCommand $ssh_url "mkdir -p $MY_ROOT/data/logs"
     # runSSHCommand $ssh_url "mkdir -p $MY_ROOT/journal"
     # runSSHCommand $ssh_url "ln -s /home/ec2-user/journal /home/ec2-user/data/dbs/journal"
