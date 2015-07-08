@@ -3,7 +3,7 @@ key_name = "rui-aws-cap"
 count = "1"
 mastercount = "1"
 
-mongoversion = "3.0.4"
+mongoversion = "3.1.4"
 user = "rui"
 owner = "rui.zhang"
 
