@@ -33,6 +33,7 @@ function printDescription() {
 
 ## end of make stderr red
 
+# for debug
 # set -x
 
 # set debug flag, empty for no debug
@@ -42,7 +43,7 @@ readonly numShard=$3
 # parameters
 readonly ChunkSize="--chunkSize=64"
 readonly MY_ROOT="/home/ec2-user"
-readonly PEMFILE="-i /Users/rui/bin/rui-cap-east.pem"
+readonly SSHKEY="-i ${PEMFILE}"
 readonly USER="ec2-user"
 readonly mongos=$ms
 
@@ -105,7 +106,7 @@ runSSHCommand() {
 
     # ssh command here
     # /usr/bin/ssh -i /Users/rui/bin/rui-aws-cap.pem $ssh_url $cmd
-    /usr/bin/ssh $PEMFILE $USER@$ssh_url $cmd
+    /usr/bin/ssh -oStrictHostKeyChecking=no $SSHKEY $USER@$ssh_url $cmd
 }
 
 # input
@@ -394,9 +395,9 @@ done
 
 sleep 2
 
-startConfigServer $version $config1 "--storageEngine=mmapv1"
-startConfigServer $version $config2 "--storageEngine=mmapv1"
-startConfigServer $version $config3 "--storageEngine=mmapv1"
+startConfigServer $version $config1 ${_storageEngine}
+startConfigServer $version $config2 ${_storageEngine}
+startConfigServer $version $config3 ${_storageEngine}
 
 
 

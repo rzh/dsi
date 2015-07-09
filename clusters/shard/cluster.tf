@@ -203,7 +203,7 @@ resource "aws_instance" "master" {
     provisioner "remote-exec" {
         inline = [
             "sudo yum -y install tmux git wget sysstat dstat perf",
-            "curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv; mv mongodb-linux-x86_64-${var.mongoversion} ${var.mongoversion}",
+            "mkdir mongodb; curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv -C mongodb; cd mongodb; mv */bin . ",
             "mkdir -p ~/bin",
             "ln -s ~/${var.mongoversion}/bin/mongo ~/bin/mongo",
             "wget --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://download.oracle.com/otn-pub/java/jdk/7u71-b14/jdk-7u71-linux-x64.rpm; sudo rpm -i jdk-7u71-linux-x64.rpm;",
@@ -269,7 +269,7 @@ resource "aws_instance" "configserver" {
     provisioner "remote-exec" {
         inline = [
             "sudo yum -y install tmux git wget sysstat dstat perf",
-            "curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv; mv mongodb-linux-x86_64-${var.mongoversion} ${var.mongoversion}",
+            "mkdir mongodb; curl https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${var.mongoversion}.tgz | tar zxv -C mongodb; cd mongodb; mv */bin . ",
             "mkdir -p ~/bin",
             "ln -s ~/${var.mongoversion}/bin/mongo ~/bin/mongo",
             "echo 'never' | sudo tee /sys/kernel/mm/transparent_hugepage/enabled", 
