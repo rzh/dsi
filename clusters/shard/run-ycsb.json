@@ -3,12 +3,12 @@
     "runs": [
             {
                         "run_id": "ycsb_load",
-                        "clients": [ "ec2-user@52.26.252.222" ],
+                        "clients": [ %%CLIENT%% ],
                         "client_logs": [],
-                        "servers": [ "ec2-user@52.26.254.96" ],
+                        "servers": [ %%MS%% ],
                         "server_logs": [],
                         "type"  : "ycsb",
-                        "cmd": "cd YCSB/ycsb-mongodb; pwd; ls; ./evergreen-load.sh 10.2.1.99; sleep 1"
+                        "cmd": "cd YCSB/ycsb-mongodb; ./test-evergreen-load.sh %%MS_PRIVATE_IP%%; sleep 1"
                     }
         ]}
 
