@@ -1,7 +1,7 @@
 
 key_name = "rui-aws-cap"
 
-count = "3"
+count = "9"
 mastercount = "2"
 configcount = "3"
 
